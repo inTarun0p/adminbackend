@@ -10,19 +10,52 @@ from .Serializer import ProductSerializer
 @api_view(['POST'])
 def add_product(request):
     if request.method == 'POST':
-        name = request.POST.get('name')
-        productid = request.POST.get('productid')
-        category = request.POST.get('category')
-        price = request.POST.get('price')
-        stock = request.POST.get('stock')
-        sales = request.POST.get('sales')
-        image = request.FILES.get('image')
-
-        product = Product(name=name, productid=productid, category=category, price=price, stock=stock, sales=sales, image=image)
-        product.save()
-
-        return  Response({'message': 'Product added successfully'}, status=status.HTTP_201_CREATED)
-    return Response({'error': 'Invalid request method'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            # Initialize data dictionary
+            data = {}
+            
+            # Handle form data (for file uploads)
+            if request.FILES:
+                data = request.POST.dict()  # Get all form fields
+                if 'image' in request.FILES:
+                    data['image'] = request.FILES['image']
+            # Handle JSON data
+            elif request.data:
+                data = request.data.dict() if hasattr(request.data, 'dict') else dict(request.data)
+            # Fallback to request.POST if nothing else
+            elif request.POST:
+                data = request.POST.dict()
+            
+            # Log the incoming data for debugging
+            print("Incoming data:", data)
+            
+            # Include the request in the serializer context for URL generation
+            serializer = ProductSerializer(data=data, context={'request': request})
+            
+            if serializer.is_valid():
+                serializer.save()
+                return Response(
+                    {'message': 'Product added successfully', 'data': serializer.data},
+                    status=status.HTTP_201_CREATED
+                )
+            else:
+                print("Serializer errors:", serializer.errors)
+                return Response(
+                    {'error': 'Invalid data', 'details': serializer.errors},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+                
+        except Exception as e:
+            print("Error in add_product:", str(e))
+            return Response(
+                {'error': str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+    
+    return Response(
+        {'error': 'Invalid request method'},
+        status=status.HTTP_405_METHOD_NOT_ALLOWED
+    )
 
 
 @api_view(['GET'])

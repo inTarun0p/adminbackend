@@ -32,6 +32,15 @@ ALLOWED_HOSTS = ['adminbackend-czlc.onrender.com', 'localhost', '127.0.0.1']
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "https://adminbackend-czlc.onrender.com",
+    "https://admindashfrontend-ehn4.vercel.app/"  # Replace with your actual frontend domain
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://adminbackend-czlc.onrender.com",
+    "https://admindashfrontend-ehn4.vercel.app/"  # Replace with your actual frontend domain
 ]
 
 # Application definition
