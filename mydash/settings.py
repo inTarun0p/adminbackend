@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -49,7 +50,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    "whitenoise.middleware.WhiteNoiseMiddleware"    
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -83,16 +84,32 @@ WSGI_APPLICATION = 'mydash.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# DATABASES = {
+#     # 'default': {
+#     #     'ENGINE': 'django.db.backends.mysql',
+#     #     'NAME': 'dashboard',
+#     #     'USER': 'root',
+#     #     'PASSWORD': 'root',
+#     #     'HOST':'localhost',
+#     #     'PORT':'3306',
+#     # }
+#     # 'default':dj_database_url.config(os.environ.get('DATABASE_URL'))
+# }
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'dashboard',
-        'USER': 'root',
-        'PASSWORD': 'root',
-        'HOST':'localhost',
-        'PORT':'3306',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'admindatabase_5kye',
+        'USER': 'admindatabase_5kye_user',
+        'PASSWORD': '7AYfwxbho5G4MhVB6e2MOBdFZ1X01Dwh',
+        'HOST': 'dpg-d1p0906r433s73cr606g-a.oregon-postgres.render.com',
+        'PORT': '5432',
     }
 }
+
+# Then try to update with DATABASE_URL if it exists
+
+db_from_env = dj_database_url.config(conn_max_age=600)
+DATABASES['default'].update(db_from_env)
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
